@@ -5,6 +5,7 @@ use App\Http\Requests;
 use App\Http\Requests\CreateArticleRequest;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class ArticlesController extends Controller {
 
@@ -32,6 +33,21 @@ class ArticlesController extends Controller {
 	public function store(CreateArticleRequest $request)
 	{
 		Article::create($request->all());
+
+		return redirect('articles');
+	}
+
+	public function edit($id)
+	{
+		$article = Article::findOrNew($id);
+		return view('articles.edit', compact('article'));
+	}
+
+	public function update($id, Request $request)
+	{
+		$article = Article::findOrNew($id);
+
+		$article->update($request->all());
 
 		return redirect('articles');
 	}
