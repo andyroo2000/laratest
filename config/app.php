@@ -147,7 +147,7 @@ return [
 		'App\Providers\RouteServiceProvider',
 
 		'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
-
+		'Laracasts\Flash\FlashServiceProvider',
 	],
 
 	/*
@@ -197,7 +197,7 @@ return [
 		'View'      => 'Illuminate\Support\Facades\View',
 		'Form'      => 'Illuminate\Html\FormFacade',
 		'Html'      => 'Illuminate\Html\HtmlFacade',
-
+		'Flash'		=> 'Laracasts\Flash\Flash'
 	],
 
 ];
