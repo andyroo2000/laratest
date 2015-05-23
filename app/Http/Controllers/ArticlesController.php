@@ -2,7 +2,7 @@
 
 use App\Article;
 use App\Http\Requests;
-use App\Http\Requests\CreateArticleRequest;
+use App\Http\Requests\ArticleRequest;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -30,7 +30,7 @@ class ArticlesController extends Controller {
 		return view('articles.create');
 	}
 
-	public function store(CreateArticleRequest $request)
+	public function store(ArticleRequest $request)
 	{
 		Article::create($request->all());
 
@@ -39,13 +39,13 @@ class ArticlesController extends Controller {
 
 	public function edit($id)
 	{
-		$article = Article::findOrNew($id);
+		$article = Article::findOrFail($id);
 		return view('articles.edit', compact('article'));
 	}
 
-	public function update($id, Request $request)
+	public function update($id, ArticleRequest $request)
 	{
-		$article = Article::findOrNew($id);
+		$article = Article::findOrFail($id);
 
 		$article->update($request->all());
 
