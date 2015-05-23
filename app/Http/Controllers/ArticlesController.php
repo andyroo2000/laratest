@@ -4,6 +4,7 @@ use App\Article;
 use App\Http\Requests;
 use App\Http\Requests\ArticleRequest;
 use App\Http\Controllers\Controller;
+use App\Tag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,9 @@ use Illuminate\Support\Facades\Response;
 
 class ArticlesController extends Controller {
 
+	/**
+	 * Create a new articles controller instance
+	 */
 	public function __construct()
 	{
 		$this->middleware('auth');
@@ -40,7 +44,8 @@ class ArticlesController extends Controller {
 	 */
 	public function create()
 	{
-		return view('articles.create');
+		$tags = Tag::lists('name', 'id');
+		return view('articles.create', compact('tags'));
 	}
 
 	/**
@@ -49,7 +54,7 @@ class ArticlesController extends Controller {
 	 */
 	public function store(ArticleRequest $request)
 	{
-		Auth::user()->articles()->create($request->all());
+		$this->createArticle($request);
 
 		flash()->overlay('Your article has been successfully created!', 'Good Job');
 
@@ -62,7 +67,8 @@ class ArticlesController extends Controller {
 	 */
 	public function edit(Article $article)
 	{
-		return view('articles.edit', compact('article'));
+		$tags = Tag::lists('name', 'id');
+		return view('articles.edit', compact('article', 'tags'));
 	}
 
 	/**
@@ -74,7 +80,31 @@ class ArticlesController extends Controller {
 	{
 		$article->update($request->all());
 
+		$this->syncTags($article, $request->input('tag_list'));
+
 		return redirect('articles');
+	}
+
+	/**
+	 * Sync up the list of tags in the database
+	 *
+	 * @param Article $article
+	 * @param array $tags
+	 */
+	private function syncTags(Article $article, array $tags) {
+		$article->tags()->sync($tags);
+	}
+
+	/**
+	 * Save a new article
+	 *
+	 * @param ArticleRequest $request
+	 * @return mixed
+	 */
+	private function createArticle(ArticleRequest $request) {
+		$article = Auth::user()->articles()->create($request->all());
+
+		$this->syncTags($article, $request->input('tag_list'));
 	}
 
 }
