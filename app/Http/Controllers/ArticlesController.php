@@ -7,9 +7,18 @@ use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 
 class ArticlesController extends Controller {
 
+	public function __construct()
+	{
+		$this->middleware('auth');
+	}
+
+	/**
+	 * @return Response
+	 */
 	public function index()
 	{
 		$articles = Article::latest('published_at')->published()->get();
@@ -17,20 +26,27 @@ class ArticlesController extends Controller {
 		return view('articles.index', compact('articles'));
 	}
 
-	public function show($id)
+	/**
+	 * @param Article $article
+	 * @return Response
+	 */
+	public function show(Article $article)
 	{
-		$article = Article::findOrFail($id);
-
-		dd($article->published_at);
-
 		return view('articles.show', compact('article'));
 	}
 
+	/**
+	 * @return Response
+	 */
 	public function create()
 	{
 		return view('articles.create');
 	}
 
+	/**
+	 * @param ArticleRequest $request
+	 * @return Response
+	 */
 	public function store(ArticleRequest $request)
 	{
 		$article = new Article($request->all());
@@ -39,16 +55,22 @@ class ArticlesController extends Controller {
 		return redirect('articles');
 	}
 
-	public function edit($id)
+	/**
+	 * @param Article $article
+	 * @return Response
+	 */
+	public function edit(Article $article)
 	{
-		$article = Article::findOrFail($id);
 		return view('articles.edit', compact('article'));
 	}
 
-	public function update($id, ArticleRequest $request)
+	/**
+	 * @param Article $article
+	 * @param ArticleRequest $request
+	 * @return Response
+	 */
+	public function update(Article $article, ArticleRequest $request)
 	{
-		$article = Article::findOrFail($id);
-
 		$article->update($request->all());
 
 		return redirect('articles');
