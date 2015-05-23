@@ -3,3 +3,4 @@
 .env
 .idea/
 blog.iml
+storage/database.sqlite
